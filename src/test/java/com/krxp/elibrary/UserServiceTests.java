@@ -1,6 +1,6 @@
 package com.krxp.elibrary;
 
-import com.krxp.elibrary.controller.ReserveResponse;
+import com.krxp.elibrary.enums.ReserveResponse;
 import com.krxp.elibrary.dao.ReservationDao;
 import com.krxp.elibrary.dao.UserDao;
 import com.krxp.elibrary.dto.UserDto;

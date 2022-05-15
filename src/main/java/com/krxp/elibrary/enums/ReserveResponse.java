@@ -1,4 +1,4 @@
-package com.krxp.elibrary.controller;
+package com.krxp.elibrary.enums;
 
 public enum ReserveResponse {
     OK("Книга забронировна"),

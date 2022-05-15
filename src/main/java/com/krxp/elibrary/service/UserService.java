@@ -1,6 +1,6 @@
 package com.krxp.elibrary.service;
 
-import com.krxp.elibrary.controller.ReserveResponse;
+import com.krxp.elibrary.enums.ReserveResponse;
 import com.krxp.elibrary.dto.UserDto;
 import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.model.User;
