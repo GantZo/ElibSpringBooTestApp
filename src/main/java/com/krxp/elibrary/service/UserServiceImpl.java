@@ -1,5 +1,6 @@
 package com.krxp.elibrary.service;
 
+import com.krxp.elibrary.controller.ReserveResponse;
 import com.krxp.elibrary.dao.BookDao;
 import com.krxp.elibrary.dao.ReservationDao;
 import com.krxp.elibrary.dao.UserDao;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,9 +36,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BookDao bookDao;
 
-    private static final String SUCCESS_MESSAGE = "Книга забронировна";
-    private static final String FAILED_RESERVE_MESSAGE = "Книга недоступна для бронирования до %s";
-    private static final String FAILED_USER_MESSAGE = "Пользователь или книга не существует";
 
     @Override
     public void addUser(User user) {
@@ -58,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Pair<Boolean, String> reserve(final String userLogin, final String bookName) {
+    public ReserveResponse reserve(final String userLogin, final String bookName) {
         final User user = userDao.findByLogin(userLogin);
         final Book book = bookService.findByName(bookName);
 
@@ -73,15 +70,14 @@ public class UserServiceImpl implements UserService {
                 reservation.setBookedDate(LocalDateTime.now().plusHours(1));
                 reservationDao.save(reservation);
 
-                return Pair.of(Boolean.TRUE, SUCCESS_MESSAGE);
+                return ReserveResponse.OK;
             } else {
-                final Long bookId = book.getId();
-                final Reservation reservation = reservationDao.findByBookId(bookId);
 
-                return Pair.of(Boolean.FALSE, String.format(FAILED_RESERVE_MESSAGE, reservation.getBookedDate().toString()));
+                return ReserveResponse.ERR_RESERVE;
             }
         } else {
-            return Pair.of(Boolean.FALSE, FAILED_USER_MESSAGE);
+
+            return ReserveResponse.ERR_USER;
         }
     }
 
@@ -89,18 +85,18 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<UserDto> getAllUsers(final SortType sortType) {
         return switch (sortType) {
-            case REGISTRATION_DATE -> findAllUser(0, 5, "registrationDate")
-                    .getContent()
-                    .stream()
-                    .map(user -> UserDto.from(user.getLogin(), user.getRegistrationDate()))
-                    .toList();
-
-            default -> findAllUser(0, 5, "login")
-                    .getContent()
-                    .stream()
-                    .map(user -> UserDto.from(user.getLogin(), user.getRegistrationDate()))
-                    .toList();
+            case USER_LOGIN -> getUsers("login");
+            case REGISTRATION_DATE -> getUsers("registrationDate");
+            default -> getUsers("id");
         };
+    }
+
+    private List<UserDto> getUsers(final String sort) {
+        return findAllUser(0, 5, sort)
+                .getContent()
+                .stream()
+                .map(user -> UserDto.from(user.getLogin(), user.getRegistrationDate()))
+                .toList();
     }
 
     @Override

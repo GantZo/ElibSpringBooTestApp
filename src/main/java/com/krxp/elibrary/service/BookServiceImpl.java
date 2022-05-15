@@ -88,31 +88,25 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public List<BookDto> getBooks(final SortType sortType) {
         return switch (sortType) {
-            case PUBLISH_DATE ->  findAllBooks(0, 5, "publishYear")
-                    .getContent()
-                    .stream()
-                    .map(book -> BookDto
-                            .builder()
-                            .setBookName(book.getName())
-                            .setAuthorName(book.getAuthor().getName())
-                            .setAuthorSurname(book.getAuthor().getSurname())
-                            .setPublishDate(book.getPublishYear())
-                            .setIsBooked(book.getBooked())
-                            .build())
-                    .toList();
-            default -> findAllBooks(0, 5, "name")
-                    .getContent()
-                    .stream()
-                    .map(book -> BookDto
-                            .builder()
-                            .setBookName(book.getName())
-                            .setAuthorName(book.getAuthor().getName())
-                            .setAuthorSurname(book.getAuthor().getSurname())
-                            .setPublishDate(book.getPublishYear())
-                            .setIsBooked(book.getBooked())
-                            .build())
-                    .toList();
+            case BOOK_NAME -> getBooks("name");
+            case PUBLISH_DATE -> getBooks("publishYear");
+            default -> getBooks("id");
         };
+    }
+
+    private List<BookDto> getBooks(final String sort) {
+        return findAllBooks(0, 5, sort)
+                .getContent()
+                .stream()
+                .map(book -> BookDto
+                        .builder()
+                        .setBookName(book.getName())
+                        .setAuthorName(book.getAuthor().getName())
+                        .setAuthorSurname(book.getAuthor().getSurname())
+                        .setPublishDate(book.getPublishYear())
+                        .setIsBooked(book.getBooked())
+                        .build())
+                .toList();
     }
 
     @Override

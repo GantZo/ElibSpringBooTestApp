@@ -1,12 +1,12 @@
 package com.krxp.elibrary;
 
+import com.krxp.elibrary.controller.ReserveResponse;
 import com.krxp.elibrary.dao.ReservationDao;
 import com.krxp.elibrary.dao.UserDao;
 import com.krxp.elibrary.dto.UserDto;
 import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.model.Author;
 import com.krxp.elibrary.model.Book;
-import com.krxp.elibrary.model.Reservation;
 import com.krxp.elibrary.model.User;
 import com.krxp.elibrary.service.BookService;
 import com.krxp.elibrary.service.UserService;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -126,23 +125,13 @@ public class UserServiceTests {
 
     @Test
     public void reserveTest() {
-        final Pair<Boolean, String> result1 = userService.reserve("user1", "Триумфальная арка");
-        final Pair<Boolean, String> result2 = userService.reserve("user1", "asrqwe42");
-        final Pair<Boolean, String> result3 = userService.reserve("user1", "Триумфальная арка");
+        final ReserveResponse result1 = userService.reserve("user1", "Триумфальная арка");
+        final ReserveResponse result2 = userService.reserve("user1", "asrqwe42");
+        final ReserveResponse result3 = userService.reserve("user1", "Триумфальная арка");
 
-        final Book book = bookService.findByName("Триумфальная арка");
-        final Reservation reservation = reservationDao.findByBookId(book.getId());
-
-        final Pair<Boolean, String> expected1 = Pair.of(Boolean.TRUE, "Книга забронировна");
-        final Pair<Boolean, String> expected2 = Pair.of(Boolean.FALSE, "Пользователь или книга не существует");
-        final Pair<Boolean, String> expected3 = Pair.of(
-                Boolean.FALSE,
-                String.format("Книга недоступна для бронирования до %s", reservation.getBookedDate().toString())
-        );
-
-        assertEquals(result1.getSecond(), expected1.getSecond());
-        assertEquals(result2.getSecond(), expected2.getSecond());
-        assertEquals(result3.getSecond(), expected3.getSecond());
+        assertEquals(result1.getResponseMessage(), ReserveResponse.OK.getResponseMessage());
+        assertEquals(result2.getResponseMessage(), ReserveResponse.ERR_USER.getResponseMessage());
+        assertEquals(result3.getResponseMessage(), ReserveResponse.ERR_RESERVE.getResponseMessage());
     }
 
     @Test

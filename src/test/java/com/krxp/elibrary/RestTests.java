@@ -1,5 +1,6 @@
 package com.krxp.elibrary;
 
+import com.krxp.elibrary.controller.ReserveResponse;
 import com.krxp.elibrary.dao.ReservationDao;
 import com.krxp.elibrary.dao.UserDao;
 import com.krxp.elibrary.model.Author;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
@@ -200,10 +202,9 @@ public class RestTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("second", is("Книга забронировна")));
-
-        final Book book = bookService.findByName("1984");
-        final Reservation reservation = reservationDao.findByBookId(book.getId());
+                .andExpect(result -> assertEquals(
+                        result.getResponse().getContentAsString(),
+                        ReserveResponse.OK.getResponseMessage()));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders
@@ -211,8 +212,10 @@ public class RestTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("second", is(String.format(
-                        "Книга недоступна для бронирования до %s", reservation.getBookedDate().toString()))));
+                .andExpect(result -> assertEquals(
+                        result.getResponse().getContentAsString(),
+                        ReserveResponse.ERR_RESERVE.getResponseMessage())
+                );
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders
@@ -220,7 +223,9 @@ public class RestTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("second", is("Книга забронировна")));
+                .andExpect(result -> assertEquals(
+                        result.getResponse().getContentAsString(),
+                        ReserveResponse.OK.getResponseMessage()));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders
@@ -228,7 +233,13 @@ public class RestTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("second", is("Пользователь или книга не существует")));
+                .andExpect(result -> assertEquals(
+                        result.getResponse().getContentAsString(),
+                        ReserveResponse.ERR_USER.getResponseMessage()));
+
+
+        final Book book1 = bookService.findByName("1984");
+        final Reservation reservation1 = reservationDao.findByBookId(book1.getId());
 
         final Book book2 = bookService.findByName("Жизнь взаймы");
         final Reservation reservation2 = reservationDao.findByBookId(book2.getId());
@@ -242,7 +253,7 @@ public class RestTests {
                 .andExpect(jsonPath("userLogin", is("user1")))
                 .andExpect(jsonPath("bookList.[0].bookName", is("1984")))
                 .andExpect(jsonPath("bookList.[1].bookName", is("Жизнь взаймы")))
-                .andExpect(jsonPath("bookList.[0].reservedDate", is(reservation.getBookedDate().toString())))
+                .andExpect(jsonPath("bookList.[0].reservedDate", is(reservation1.getBookedDate().toString())))
                 .andExpect(jsonPath("bookList.[1].reservedDate", is(reservation2.getBookedDate().toString())));
     }
 

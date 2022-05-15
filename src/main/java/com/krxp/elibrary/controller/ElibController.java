@@ -6,7 +6,6 @@ import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.service.BookService;
 import com.krxp.elibrary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,8 +64,8 @@ public class ElibController {
 
     @GetMapping("/books/reserve")
     @ResponseBody
-    public Pair<Boolean, String> reserveBook(@RequestParam final String userLogin, final String bookName) {
-        return userService.reserve(userLogin, bookName);
+    public String reserveBook(@RequestParam final String userLogin, final String bookName) {
+        return userService.reserve(userLogin, bookName).getResponseMessage();
     }
 
     @GetMapping("/user/info")

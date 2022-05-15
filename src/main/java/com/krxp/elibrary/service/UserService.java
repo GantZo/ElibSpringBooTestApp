@@ -1,10 +1,10 @@
 package com.krxp.elibrary.service;
 
+import com.krxp.elibrary.controller.ReserveResponse;
 import com.krxp.elibrary.dto.UserDto;
 import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.model.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface UserService {
 
     void deleteAll();
 
-    Pair<Boolean, String> reserve(String userLogin, String bookName);
+    ReserveResponse reserve(String userLogin, String bookName);
 
     List<UserDto> getAllUsers(SortType sortType);
 
