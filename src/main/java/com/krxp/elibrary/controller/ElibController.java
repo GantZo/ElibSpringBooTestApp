@@ -60,7 +60,7 @@ public class ElibController {
     @GetMapping("/users/sortByDate")
     @ResponseBody
     public List<UserDto> getAllUsersSortByDate() {
-        return userService.getAllUsers(SortType.USER_LOGIN);
+        return userService.getAllUsers(SortType.REGISTRATION_DATE);
     }
 
     @GetMapping("/books/reserve")
