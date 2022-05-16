@@ -13,6 +13,7 @@ public class Reservation {
     @Column(name = "ID")
     private Long id;
 
+    // TODO а как будет реализовываться обратная связь при этом?
     @OneToOne
     @JoinColumn(name = "USER_ID")
     private User user;

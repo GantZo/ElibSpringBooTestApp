@@ -7,15 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookDao extends JpaRepository<Book, Long> {
 
-    Book findByName(String name);
+    Optional<Book> findFirstByName(String name);
 
     void deleteByName(String name);
-
-    void deleteByIdIn(List<Long> ids);
 
     @Override
     Page<Book> findAll(Pageable pageable);

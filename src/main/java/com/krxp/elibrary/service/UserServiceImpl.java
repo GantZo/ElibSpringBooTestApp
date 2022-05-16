@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -57,9 +58,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ReserveResponse reserve(final String userLogin, final String bookName) {
         final User user = userDao.findByLogin(userLogin);
-        final Book book = bookService.findByName(bookName);
+        final Book book = bookService.findByName(bookName).orElseThrow();
 
-        if (user != null && book != null) {
+        if (user != null) {
 
             if (book.getBooked() == null || Boolean.FALSE.equals(book.getBooked())) {
                 book.setBooked(true);

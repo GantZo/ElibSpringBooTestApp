@@ -2,29 +2,21 @@ package com.krxp.elibrary.service;
 
 import com.krxp.elibrary.dto.BookDto;
 import com.krxp.elibrary.enums.SortType;
-import com.krxp.elibrary.model.Author;
 import com.krxp.elibrary.model.Book;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface BookService {
 
-
-    void addAuthor(Author author);
     void addBook(Book book, String authorSurname);
 
-    void removeAuthor(String surname);
     void removeBook(String name);
 
-
-    Book findByName(String name);
-
-    Author findBySurname(String surname);
-
-
-    Page<Author> findAllAuthors(final int page, final int size, final String field);
+    Optional<Book> findByName(String name);
 
     Page<Book> findAllBooks(final int page, final int size, final String field);
 
@@ -36,6 +28,8 @@ public interface BookService {
     List<BookDto> getBooksByAuthor(String surname, SortType sortType);
 
     void clear();
+
+    Page<BookDto> getBooksPage(Pageable pageable);
 }
 
 

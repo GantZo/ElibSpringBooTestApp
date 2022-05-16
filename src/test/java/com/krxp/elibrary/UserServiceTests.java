@@ -8,6 +8,7 @@ import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.model.Author;
 import com.krxp.elibrary.model.Book;
 import com.krxp.elibrary.model.User;
+import com.krxp.elibrary.service.AuthorService;
 import com.krxp.elibrary.service.BookService;
 import com.krxp.elibrary.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +31,9 @@ public class UserServiceTests {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private AuthorService authorService;
 
     @Autowired
     private ReservationDao reservationDao;
@@ -111,9 +115,9 @@ public class UserServiceTests {
 
         hemingway.addBook(forWhomTheBellTolls);
 
-        bookService.addAuthor(jO);
-        bookService.addAuthor(remark);
-        bookService.addAuthor(hemingway);
+        authorService.addAuthor(jO);
+        authorService.addAuthor(remark);
+        authorService.addAuthor(hemingway);
     }
 
     @Test

@@ -19,9 +19,11 @@ public class Book {
     @Column(name = "PUBLISH_YEAR")
     private LocalDate publishYear;
 
+    // TODO нет никакого смысла иметь в этой колоне null, т.к. варианта всего 2. Логика будет проще
     @Column(name = "IS_BOOKED")
     private Boolean isBooked;
 
+    // TODO не редко когда книгу пишут в соавторстве, связь не корректная
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID")
     private Author author;

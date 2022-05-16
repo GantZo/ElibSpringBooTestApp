@@ -4,6 +4,7 @@ import com.krxp.elibrary.dto.BookDto;
 import com.krxp.elibrary.enums.SortType;
 import com.krxp.elibrary.model.Author;
 import com.krxp.elibrary.model.Book;
+import com.krxp.elibrary.service.AuthorService;
 import com.krxp.elibrary.service.BookService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ class BookServiceTests {
 
     @Autowired
     private BookService bookService;
+    @Autowired
+    private AuthorService authorService;
 
     @BeforeEach
     public void fillTable() {
@@ -77,9 +80,9 @@ class BookServiceTests {
 
         hemingway.addBook(forWhomTheBellTolls);
 
-        bookService.addAuthor(jO);
-        bookService.addAuthor(remark);
-        bookService.addAuthor(hemingway);
+        authorService.addAuthor(jO);
+        authorService.addAuthor(remark);
+        authorService.addAuthor(hemingway);
     }
 
     @Test
@@ -89,7 +92,7 @@ class BookServiceTests {
         oldManAndSea.setPublishYear(LocalDate.of(1951, 9, 1));
         bookService.addBook(oldManAndSea, "Хемингуэй");
 
-        final Book result = bookService.findByName(oldManAndSea.getName());
+        final Book result = bookService.findByName(oldManAndSea.getName()).orElseThrow();
 
         assertEquals(oldManAndSea.getName(), result.getName());
         assertEquals(oldManAndSea.getPublishYear(), result.getPublishYear());
@@ -97,23 +100,23 @@ class BookServiceTests {
 
     @Test
     public void removeAuthorAndBookTest() {
-        bookService.removeAuthor("Хемингуэй");
+        authorService.removeAuthor("Хемингуэй");
 
-        final Author author = bookService.findBySurname("Хемингуэй");
-        final Book book = bookService.findByName("По ком звонит колокол");
+        final Author author = authorService.findBySurname("Хемингуэй");
+        final Book book = bookService.findByName("По ком звонит колокол").orElse(null);
 
         assertNull(author);
         assertNull(book);
 
         bookService.removeBook("Скотный двор");
 
-        final Book book1 = bookService.findByName("Скотный двор");
+        final Book book1 = bookService.findByName("Скотный двор").orElse(null);
         assertNull(book1);
     }
 
     @Test
     public void pagingAndSortTest() {
-        Page<Author> authors = bookService.findAllAuthors(0, 1, "surname");
+        Page<Author> authors = authorService.findAllAuthors(0, 1, "surname");
         Page<Book> books = bookService.findAllBooks(0, 3, "name");
 
         assertEquals(1, authors.getPageable().getPageSize());

@@ -7,6 +7,7 @@ import com.krxp.elibrary.model.Author;
 import com.krxp.elibrary.model.Book;
 import com.krxp.elibrary.model.Reservation;
 import com.krxp.elibrary.model.User;
+import com.krxp.elibrary.service.AuthorService;
 import com.krxp.elibrary.service.BookService;
 import com.krxp.elibrary.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -44,6 +45,9 @@ public class RestTests {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private AuthorService authorService;
 
     @Autowired
     private ReservationDao reservationDao;
@@ -126,9 +130,9 @@ public class RestTests {
 
         hemingway.addBook(forWhomTheBellTolls);
 
-        bookService.addAuthor(jO);
-        bookService.addAuthor(remark);
-        bookService.addAuthor(hemingway);
+        authorService.addAuthor(jO);
+        authorService.addAuthor(remark);
+        authorService.addAuthor(hemingway);
     }
 
     @Test
@@ -238,10 +242,10 @@ public class RestTests {
                         ReserveResponse.ERR_USER.getResponseMessage()));
 
 
-        final Book book1 = bookService.findByName("1984");
+        final Book book1 = bookService.findByName("1984").orElseThrow();
         final Reservation reservation1 = reservationDao.findByBookId(book1.getId());
 
-        final Book book2 = bookService.findByName("Жизнь взаймы");
+        final Book book2 = bookService.findByName("Жизнь взаймы").orElseThrow();
         final Reservation reservation2 = reservationDao.findByBookId(book2.getId());
 
         this.mockMvc
